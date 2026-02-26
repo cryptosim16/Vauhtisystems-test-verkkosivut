@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VauhtiSystems — Lopeta liidivuoto. Sulje enemmän kauppoja.</title>
+  <meta name="description" content="Vastaamme tarjouspyyntöihisi 10 sekunnissa – 24/7. Automatisoimme remonttifirmasi myyntiprosessin." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Inter:wght@400;500&display=swap');
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── Tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg:          #0a0a0a;
+      --surface:     #111111;
+      --floating:    #1a1a1a;
+      --accent:      #2563EB;
+      --accent-dark: #1d4ed8;
+      --border:      rgba(255,255,255,0.08);
+      --border-mid:  rgba(255,255,255,0.13);
+      --text:        #ffffff;
+      --muted:       rgba(255,255,255,0.45);
+      --muted-dim:   rgba(255,255,255,0.22);
+      --red-bg:      rgba(239,68,68,0.05);
+      --red-border:  rgba(239,68,68,0.2);
+      --green:       #22c55e;
+      --r:           8px;
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ─── Base ───────────────────────────────────────────────── */
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { background: var(--bg); overflow-x: hidden; }
+    h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.03em; }
+
+    /* ─── Noise overlay ──────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999; opacity: 0.3;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────── */
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    @media (min-width: 768px) { .wrap { padding: 0 48px; } }
+    .section { padding: 120px 0; }
+    @media (min-width: 768px) { .section { padding: 148px 0; } }
+
+    /* ─── NAV ────────────────────────────────────────────────── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 200; padding: 0 24px;
+    }
+    #nav .nav-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s var(--ease-out), padding 0.3s var(--ease-out);
+    }
+    #nav.scrolled {
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(14px) saturate(1.4);
+      -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    }
+    #nav.scrolled .nav-inner { border-color: rgba(255,255,255,0.06); padding: 14px 0; }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.0625rem; letter-spacing: -0.03em;
+      color: var(--text); text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+    .nav-logo:hover { opacity: 0.7; }
+    .nav-logo:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+    /* ─── Buttons ────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+      text-decoration: none; border: none; cursor: pointer;
+      border-radius: var(--r); outline: none; white-space: nowrap;
+    }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      font-size: 0.9375rem; letter-spacing: -0.01em; padding: 13px 26px;
+      transition:
+        background-color 0.2s var(--ease-out),
+        transform 0.2s var(--ease-spring),
+        box-shadow 0.25s var(--ease-out),
+        opacity 0.15s ease;
+    }
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(37,99,235,0.4), 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .btn-primary:active { transform: translateY(0); opacity: 0.88; box-shadow: none; }
+
+    .btn-sm { font-size: 0.875rem; padding: 9px 18px; }
+
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      font-size: 0.9375rem; letter-spacing: -0.01em; padding: 13px 26px;
+      border: 1px solid var(--border);
+      transition:
+        color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        transform 0.2s var(--ease-spring);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-mid); }
+    .btn-ghost:active { transform: translateY(1px); }
+
+    /* ─── Label ──────────────────────────────────────────────── */
+    .label {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+
+    /* ─── Animations ─────────────────────────────────────────── */
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-spring);
+    }
+    .anim.visible { opacity: 1; transform: translateY(0); }
+    .anim-d1 { transition-delay: 0.06s; }
+    .anim-d2 { transition-delay: 0.12s; }
+    .anim-d3 { transition-delay: 0.18s; }
+    .anim-d4 { transition-delay: 0.24s; }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 140px 24px 100px; overflow: hidden;
+    }
+    #hero .glow {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 100% 60% at 50% -8%, rgba(37,99,235,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 40% at 50% 110%, rgba(37,99,235,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #hero .noise {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+      background-size: 300px 300px; opacity: 0.55;
+    }
+    #hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.625rem);
+      font-weight: 700; line-height: 1.08; letter-spacing: -0.04em;
+      color: #fff; margin-bottom: 24px; max-width: 880px;
+    }
+    #hero .sub {
+      font-size: clamp(1rem, 1.8vw, 1.125rem);
+      color: var(--muted); line-height: 1.72;
+      max-width: 560px; margin: 0 auto 16px;
+    }
+    #hero .loss-line {
+      font-size: 15px; color: rgba(255,255,255,0.5);
+      max-width: 520px; line-height: 1.65; margin-bottom: 40px;
+    }
+    #hero .hero-actions {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+
+    /* ─── PROBLEM ────────────────────────────────────────────── */
+    #problem { border-top: 1px solid var(--border); }
+    .problem-stat {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(5rem, 14vw, 10rem);
+      font-weight: 900; letter-spacing: -0.055em; line-height: 0.9;
+      color: var(--accent); display: block; margin-bottom: 20px;
+    }
+    .problem-cards {
+      display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 64px;
+    }
+    @media (min-width: 768px) { .problem-cards { grid-template-columns: repeat(3, 1fr); } }
+    .problem-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 28px 28px 32px;
+      transition: border-color 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+    }
+    .problem-card:hover {
+      border-color: rgba(239,68,68,0.2);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
+    .problem-card-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.12em;
+      color: rgba(239,68,68,0.65); margin-bottom: 14px;
+    }
+    .problem-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem; font-weight: 600; letter-spacing: -0.02em;
+      margin-bottom: 10px; line-height: 1.3;
+    }
+    .problem-card-body { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── COMPARISON ─────────────────────────────────────────── */
+    #comparison { border-top: 1px solid var(--border); }
+    .comparison-grid {
+      display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 56px;
+    }
+    @media (min-width: 640px) { .comparison-grid { grid-template-columns: 1fr 1fr; } }
+    .compare-col {
+      border-radius: var(--r); padding: 36px 36px 32px; border: 1px solid;
+    }
+    .compare-col.before { background: var(--red-bg); border-color: var(--red-border); }
+    .compare-col.after  { background: rgba(37,99,235,0.05); border-color: rgba(37,99,235,0.22); }
+    .compare-col-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 22px;
+    }
+    .compare-col.before .compare-col-label { color: rgba(239,68,68,0.7); }
+    .compare-col.after  .compare-col-label { color: var(--accent); }
+    .compare-body { font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,0.82); margin-bottom: 28px; }
+    .compare-result {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em;
+    }
+    .compare-col.before .compare-result { color: rgba(239,68,68,0.8); }
+    .compare-col.after  .compare-result { color: var(--green); }
+
+    /* ─── HOW IT WORKS ───────────────────────────────────────── */
+    #how { border-top: 1px solid var(--border); }
+    .steps-grid {
+      display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 56px;
+    }
+    @media (min-width: 768px) { .steps-grid { grid-template-columns: repeat(3, 1fr); } }
+    .step-card {
+      position: relative;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 32px; overflow: hidden;
+      transition:
+        box-shadow 0.3s var(--ease-out),
+        transform 0.3s var(--ease-spring),
+        border-color 0.3s var(--ease-out);
+    }
+    .step-card:hover {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 10px 40px rgba(0,0,0,0.45);
+      transform: translateY(-3px); border-color: var(--border-mid);
+    }
+    .step-num-bg {
+      position: absolute; bottom: -32px; right: -8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13rem; font-weight: 900; letter-spacing: -0.06em; line-height: 1;
+      color: rgba(255,255,255,0.03); pointer-events: none; user-select: none;
+    }
+    .step-index {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.12em;
+      color: var(--accent); margin-bottom: 18px;
+    }
+    .step-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.02em;
+      margin-bottom: 10px; line-height: 1.3;
+    }
+    .step-body { font-size: 0.9rem; color: var(--muted); line-height: 1.7; position: relative; z-index: 1; }
+
+    /* ─── ROI CALCULATOR ─────────────────────────────────────── */
+    #roi { border-top: 1px solid var(--border); }
+    .roi-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 48px;
+      max-width: 680px; margin: 0 auto;
+    }
+    @media (max-width: 600px) { .roi-card { padding: 32px 24px; } }
+    .roi-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 12px;
+    }
+    .roi-field-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.72);
+    }
+    .roi-field-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.875rem; font-weight: 600; color: var(--accent);
+    }
+    .roi-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 4px; border-radius: 2px;
+      outline: none; cursor: pointer; margin-bottom: 36px;
+      background: rgba(255,255,255,0.1);
+    }
+    .roi-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 2px solid var(--accent); cursor: pointer;
+      transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
+    }
+    .roi-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.25);
+    }
+    .roi-slider::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 2px solid var(--accent); cursor: pointer; border: none;
+    }
+    .roi-seg {
+      display: flex; gap: 4px; padding: 4px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--r); margin-bottom: 36px;
+    }
+    .roi-seg-btn {
+      flex: 1; padding: 8px 10px; border: none; border-radius: 6px;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8125rem; font-weight: 500; background: transparent;
+      color: var(--muted); outline: none;
+      transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+    }
+    .roi-seg-btn.active { background: var(--surface); color: #fff; }
+    .roi-seg-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
+    .roi-seg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .roi-divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    .roi-result-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 10px;
+    }
+    .roi-result-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.75rem, 7vw, 4rem);
+      font-weight: 700; letter-spacing: -0.04em; color: var(--accent);
+      text-align: center; margin-bottom: 6px;
+      transition: opacity 0.25s ease;
+    }
+    .roi-result-num.is-zero { color: var(--green); }
+    .roi-result-sub {
+      text-align: center; font-size: 0.875rem; color: var(--muted);
+      margin-bottom: 32px; line-height: 1.5;
+    }
+
+    /* ─── FAQ ────────────────────────────────────────────────── */
+    #faq { padding: 120px 0; border-top: 1px solid var(--border); }
+    @media (min-width: 768px) { #faq { padding: 148px 0; } }
+    .faq-list { max-width: 620px; margin: 48px auto 0; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:first-child { border-top: 1px solid var(--border); }
+    .faq-trigger {
+      width: 100%; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px; padding: 20px 0;
+      background: transparent; border: none; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif; font-size: 0.9375rem;
+      font-weight: 500; letter-spacing: -0.015em; color: var(--text);
+      text-align: left; outline: none;
+      transition: color 0.2s var(--ease-out);
+    }
+    .faq-trigger:hover { color: rgba(255,255,255,0.8); }
+    .faq-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+    .faq-icon-wrap {
+      width: 22px; height: 22px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      transition: transform 0.35s var(--ease-spring), color 0.2s var(--ease-out);
+    }
+    .faq-trigger[aria-expanded="true"] .faq-icon-wrap { transform: rotate(45deg); color: var(--accent); }
+    .faq-panel { max-height: 0; overflow: hidden; transition: max-height 0.38s var(--ease-out); }
+    .faq-answer { font-size: 0.9rem; color: var(--muted); line-height: 1.75; padding-bottom: 20px; }
+
+    /* ─── PRICING ────────────────────────────────────────────── */
+    #pricing { border-top: 1px solid var(--border); }
+    .pricing-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 44px; max-width: 520px; width: 100%; margin: 0 auto;
+      transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-spring);
+    }
+    .pricing-card:hover {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.09), 0 16px 56px rgba(0,0,0,0.5);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 540px) { .pricing-card { padding: 32px 24px; } }
+    .pricing-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.375rem; font-weight: 700; letter-spacing: -0.04em; color: #fff;
+    }
+    .pricing-price-label { font-size: 0.8125rem; color: var(--muted); margin-left: 10px; }
+    .pricing-divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+    .pricing-list { list-style: none; display: flex; flex-direction: column; gap: 13px; margin-bottom: 28px; }
+    .pricing-list li { display: flex; align-items: flex-start; gap: 11px; font-size: 0.9375rem; color: rgba(255,255,255,0.82); line-height: 1.5; }
+    .check-icon { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+    .pricing-meta { font-size: 0.8125rem; color: var(--muted); line-height: 1.6; margin-bottom: 7px; }
+    .pricing-italic { font-size: 0.8125rem; color: var(--muted-dim); font-style: italic; margin-bottom: 28px; }
+    .pricing-below { text-align: center; margin-top: 18px; font-size: 0.8125rem; color: var(--muted-dim); }
+
+    /* ─── CALENDLY ───────────────────────────────────────────── */
+    #calendly { border-top: 1px solid var(--border); }
+.email-link {
+      color: rgba(255,255,255,0.6); text-decoration: underline;
+      text-underline-offset: 3px; margin-left: 4px;
+      transition: color 0.2s var(--ease-out);
+    }
+    .email-link:hover { color: var(--text); }
+    .email-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer { border-top: 1px solid var(--border); padding: 28px 24px; text-align: center; }
+    footer p { font-size: 0.8125rem; color: var(--muted-dim); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Päänavigaatio">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="VauhtiSystems — etusivu">VauhtiSystems</a>
+    <a href="#calendly" class="btn btn-primary btn-sm">Varaa demo</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. HERO
+═══════════════════════════════════════════════════════════ -->
+<section id="hero" aria-labelledby="hero-h1">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;">
+    <h1 id="hero-h1" class="anim">Lopeta kauppojen häviäminen hitaille vastauksille.</h1>
+
+    <p class="sub anim anim-d1">
+      Vastaamme tarjouspyyntöihisi 10 sekunnissa – 24/7. Automatisoimme remonttifirmasi ensivasteen, vaikka olisit itse työmaalla.
+    </p>
+
+    <p class="loss-line anim anim-d2">
+      Tutkimusten mukaan ensimmäisen 5 minuutin sisällä vastatut liidit konvertoituvat moninkertaisesti paremmin — jokainen tunti maksaa.
+    </p>
+
+    <div class="hero-actions anim anim-d3">
+      <a href="#calendly" class="btn btn-primary">Vauhdita myyntiäsi – varaa demo</a>
+      <a href="#how" class="btn btn-ghost">Katso miten se toimii ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. PROBLEM — Liidivuoto
+═══════════════════════════════════════════════════════════ -->
+<section id="problem" class="section" aria-labelledby="problem-h2">
+  <div class="wrap">
+    <div class="anim">
+      <span class="label">Ongelma</span>
+      <h2 id="problem-h2" style="font-size:clamp(2.75rem,6vw,4.5rem);font-weight:700;line-height:1.08;max-width:560px;margin-bottom:16px;letter-spacing:-0.04em;">
+        Nopeus ratkaisee.
+      </h2>
+      <p style="font-size:1rem;color:var(--muted);max-width:480px;line-height:1.7;">
+        Remonttialalla ensimmäinen vastaaja voittaa — ei halvin.
+      </p>
+    </div>
+
+    <div class="problem-cards">
+      <div class="problem-card anim anim-d1">
+        <div class="problem-card-num">01</div>
+        <h3 class="problem-card-title">Liidi tulee sisään, kukaan ei vastaa</h3>
+        <p class="problem-card-body">Asiakas täyttää tarjouspyynnön. Odotetaan. Ei kuulu mitään. Asiakas soittaa kilpailijalle.</p>
+      </div>
+      <div class="problem-card anim anim-d2">
+        <div class="problem-card-num">02</div>
+        <h3 class="problem-card-title">Kilpailija ehti ensin</h3>
+        <p class="problem-card-body">Jokainen tunti ilman vastausta on mahdollisuus kilpailijalle. Nopeus ratkaisee enemmän kuin hinta.</p>
+      </div>
+      <div class="problem-card anim anim-d3">
+        <div class="problem-card-num">03</div>
+        <h3 class="problem-card-title">Seuranta unohtuu</h3>
+        <p class="problem-card-body">Tarjous lähetetty, asiakas ei vastannut. Kukaan ei muista soittaa perään. Kauppa häviää äänettömästi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     3. SOLUTION — Before vs After
+═══════════════════════════════════════════════════════════ -->
+<section id="comparison" class="section" aria-labelledby="comparison-h2">
+  <div class="wrap">
+    <div class="anim" style="margin-bottom:56px;">
+      <span class="label">Vertailu</span>
+      <h2 id="comparison-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;max-width:520px;">
+        Sama liidi. Täysin eri lopputulos.
+      </h2>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="compare-col before anim anim-d1">
+        <div class="compare-col-label">Ennen</div>
+        <p class="compare-body">Vastaamaton liidi, unohdettu seuranta, kilpailija ehti ensin.</p>
+        <div class="compare-result">Tulos: 0 €</div>
+      </div>
+      <div class="compare-col after anim anim-d2">
+        <div class="compare-col-label">VauhtiSystems</div>
+        <p class="compare-body">Salamanopea vastaus, valmis kalenterivaraus, tyytyväinen asiakas.</p>
+        <div class="compare-result">Tulos: 15 000 € kauppa</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. HOW IT WORKS
+═══════════════════════════════════════════════════════════ -->
+<section id="how" class="section" aria-labelledby="how-h2">
+  <div class="wrap">
+    <div class="anim" style="margin-bottom:56px;">
+      <span class="label">Miten se toimii</span>
+      <h2 id="how-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;max-width:480px;margin-bottom:18px;">
+        Kolme vaihetta.<br>Ei manuaalista työtä.
+      </h2>
+      <span style="display:block;font-size:14px;color:rgba(255,255,255,0.4);border-left:2px solid #2563EB;padding-left:12px;line-height:1.65;max-width:400px;">Nopeus ratkaisee: mitä nopeammin vastaat, sitä todennäköisemmin kauppa syntyy.</span>
+    </div>
+
+    <div class="steps-grid">
+      <article class="step-card anim anim-d1" aria-label="Vaihe 1">
+        <div class="step-index">01</div>
+        <h3 class="step-title">Uusi liidi tulee sisään</h3>
+        <p class="step-body">Asiakas täyttää lomakkeen tai soittaa. Järjestelmä reagoi sekunteissa.</p>
+        <div class="step-num-bg" aria-hidden="true">1</div>
+      </article>
+      <article class="step-card anim anim-d2" aria-label="Vaihe 2">
+        <div class="step-index">02</div>
+        <h3 class="step-title">Automaatio hoitaa seurannan</h3>
+        <p class="step-body">Follow-upit, muistutukset ja tarjousviestit lähtevät oikeaan aikaan — ilman manuaalista työtä.</p>
+        <div class="step-num-bg" aria-hidden="true">2</div>
+      </article>
+      <article class="step-card anim anim-d3" aria-label="Vaihe 3">
+        <div class="step-index">03</div>
+        <h3 class="step-title">Sinä suljet kaupan</h3>
+        <p class="step-body">Näet kaikki liidit yhdessä näkymässä. Keskityt myymiseen, ei hallinnointiin.</p>
+        <div class="step-num-bg" aria-hidden="true">3</div>
+      </article>
+    </div>
+
+    <div class="anim anim-d4" style="text-align:center;margin-top:60px;">
+      <a href="#calendly" class="btn btn-primary">Vauhdita prosessiasi</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. ROI CALCULATOR
+═══════════════════════════════════════════════════════════ -->
+<section id="roi" class="section" aria-labelledby="roi-h2">
+  <div class="wrap">
+    <div class="anim" style="text-align:center;margin-bottom:56px;">
+      <span class="label">Laskuri</span>
+      <h2 id="roi-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;margin-bottom:14px;">
+        Kuinka paljon liidejä häviää kuukaudessa?
+      </h2>
+      <p style="font-size:1rem;color:var(--muted);max-width:460px;margin:0 auto;">
+        Säädä lukuja oman firmasi mukaan. Menetetty myynti lasketaan reaaliajassa.
+      </p>
+    </div>
+
+    <div class="anim anim-d1">
+      <div class="roi-card">
+
+        <!-- Slider: leads -->
+        <div class="roi-row">
+          <span class="roi-field-label">Kuukausittaisten liidien määrä</span>
+          <span class="roi-field-value" id="leads-val">20 liidiä</span>
+        </div>
+        <input type="range" class="roi-slider" id="slider-leads"
+               min="3" max="80" value="20" step="1"
+               aria-label="Kuukausittaisten liidien määrä" />
+
+        <!-- Slider: price -->
+        <div class="roi-row">
+          <span class="roi-field-label">Remontin keskihinta</span>
+          <span class="roi-field-value" id="price-val">15 000 €</span>
+        </div>
+        <input type="range" class="roi-slider" id="slider-price"
+               min="5000" max="50000" value="15000" step="500"
+               aria-label="Remontin keskihinta euroissa" />
+
+        <!-- Response time -->
+        <div class="roi-row" style="margin-bottom:10px;">
+          <span class="roi-field-label">Nykyinen vastausaika</span>
+        </div>
+        <div class="roi-seg" role="group" aria-label="Nykyinen vastausaika">
+          <button class="roi-seg-btn" data-value="immediate" aria-pressed="false">Heti</button>
+          <button class="roi-seg-btn active" data-value="hours" aria-pressed="true">Muutama tunti</button>
+          <button class="roi-seg-btn" data-value="nextday" aria-pressed="false">Seuraavana päivänä</button>
+        </div>
+
+        <hr class="roi-divider" />
+
+        <!-- Heti encouragement (hidden by default) -->
+        <div id="roi-heti-msg" style="display:none;padding:16px 20px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--r);margin-bottom:28px;">
+          <p style="font-size:0.9375rem;color:rgba(34,197,94,0.9);line-height:1.65;text-align:center;">Hyvä — vastaatte jo nopeasti. VauhtiSystems automatisoi tämän niin ettei se vaadi manuaalista työtä.</p>
+        </div>
+
+        <!-- Two-number comparison -->
+        <div id="roi-comparison" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+          <div style="text-align:center;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px 12px;">
+            <div class="roi-result-label" style="margin-bottom:8px;">Nykyinen arvio</div>
+            <div id="roi-current-deals" style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;color:var(--muted);">~3 kauppaa/kk</div>
+          </div>
+          <div style="text-align:center;background:rgba(37,99,235,0.07);border:1px solid rgba(37,99,235,0.2);border-radius:var(--r);padding:16px 12px;">
+            <div class="roi-result-label" style="margin-bottom:8px;">VauhtiSystemsin kanssa</div>
+            <div id="roi-fast-deals" style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;color:#fff;">~7 kauppaa/kk</div>
+          </div>
+        </div>
+
+        <!-- Large lost revenue number -->
+        <div id="roi-lost-row">
+          <div class="roi-result-label">Menetetty mahdollisuus</div>
+          <div class="roi-result-num" id="roi-result" aria-live="polite">18 000 €</div>
+          <div class="roi-result-sub">/ kuukausi</div>
+        </div>
+
+        <!-- Honest disclaimer -->
+        <div style="margin-bottom:28px;padding:14px 16px;border-top:1px solid var(--border);">
+          <p style="font-size:0.8125rem;color:var(--muted);line-height:1.65;margin-bottom:8px;">Arvio perustuu konservatiivisiin toimialaestimaatteihin. Todellinen hyöty selviää vasta käytännössä — siksi aloitamme pilotilla.</p>
+          <p style="font-size:0.75rem;color:var(--muted-dim);line-height:1.55;">Lähde: Speed-to-lead -tutkimukset (InsideSales, 2014). Remonttialalta ei ole julkista dataa — luvut ovat suuntaa antavia.</p>
+        </div>
+
+        <a href="#calendly" class="btn btn-primary" style="width:100%;justify-content:center;">
+          Tukki liidivuoto nyt
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. FAQ
+═══════════════════════════════════════════════════════════ -->
+<section id="faq" aria-labelledby="faq-h2">
+  <div class="wrap">
+    <div class="anim" style="max-width:620px;margin:0 auto;">
+      <span class="label">Usein kysyttyä</span>
+      <h2 id="faq-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;">
+        Kysymykset, joita kuulemme usein.
+      </h2>
+    </div>
+
+    <div class="faq-list anim anim-d1">
+
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a1" id="faq-q1">
+          Toimiiko tämä jos meillä ei ole CRM:ää?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a1" role="region" aria-labelledby="faq-q1">
+          <p class="faq-answer">Kyllä. Järjestelmä toimii itsenäisesti — voit käyttää Google Sheetsiä tai mitä tahansa olemassaolevaa työkalua.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a2" id="faq-q2">
+          Entä jos liidi tulee puhelimitse?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a2" role="region" aria-labelledby="faq-q2">
+          <p class="faq-answer">Puhelinliidit voidaan kirjata manuaalisesti tai integroida automaattiseen seurantaan. Käydään läpi demossa.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a3" id="faq-q3">
+          Kuinka nopeasti pääsemme käyttöön?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a3" role="region" aria-labelledby="faq-q3">
+          <p class="faq-answer">Pilotti on käytössä 7–10 arkipäivässä kick-off-palaverin jälkeen.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a4" id="faq-q4">
+          Kuinka paljon räätälöintiä tarvitaan?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a4" role="region" aria-labelledby="faq-q4">
+          <p class="faq-answer">Pilotti on standardoitu paketti. Muutoksia voidaan tehdä, mutta perusrakenne toimii suoraan.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a5" id="faq-q5">
+          Mitä n8n tarkoittaa käytännössä?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a5" role="region" aria-labelledby="faq-q5">
+          <p class="faq-answer">Se on automaatioalusta joka yhdistää järjestelmäsi. Et näe sitä — näet vain tulokset.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     7. PRICING
+═══════════════════════════════════════════════════════════ -->
+<section id="pricing" class="section" aria-labelledby="pricing-h2">
+  <div class="wrap">
+    <div class="anim" style="text-align:center;margin-bottom:52px;">
+      <span class="label">Hinnoittelu</span>
+      <h2 id="pricing-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;">
+        Selkeä aloituspaketti.
+      </h2>
+    </div>
+
+    <div class="anim anim-d1">
+      <div class="pricing-card">
+        <div style="margin-bottom:22px;">
+          <span class="label" style="margin-bottom:10px;">Pilot-paketti</span>
+          <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:0 10px;">
+            <span class="pricing-price">1 000 – 1 500 €</span>
+            <span class="pricing-price-label">Kertaluonteinen toteutus</span>
+          </div>
+        </div>
+
+        <hr class="pricing-divider" />
+
+        <ul class="pricing-list" aria-label="Sisältää">
+          <li>
+            <svg class="check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Automaattinen liidien vastaanotto ja kuittaus
+          </li>
+          <li>
+            <svg class="check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Follow-up -sarja (3–5 viestiä)
+          </li>
+          <li>
+            <svg class="check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Hallintanäkymä
+          </li>
+          <li>
+            <svg class="check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            30 päivän tuki käyttöönoton jälkeen
+          </li>
+        </ul>
+
+        <!-- ROI comparison -->
+        <div style="border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);padding:16px 0;margin-bottom:20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
+            <div>
+              <div style="font-size:12px;font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Pilotti</div>
+              <div style="font-size:18px;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.02em;color:#fff;">1 000–1 500 €</div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Yksi pelastettu kauppa</div>
+              <div style="font-size:18px;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.02em;color:#22c55e;">5 000–30 000 €</div>
+            </div>
+          </div>
+          <p style="text-align:center;font-size:13px;color:var(--muted);font-style:italic;line-height:1.55;">Tyypillisesti yksi lisäkauppa maksaa pilotin moninkertaisesti takaisin.</p>
+        </div>
+
+        <p class="pricing-meta">Käyttöön 7–10 arkipäivässä. 1 kick-off + 1 luovutuspalaveri.</p>
+        <p class="pricing-italic">Jatko vain jos näet tuloksia — ei pitkiä sopimuksia.</p>
+        <p style="text-align:center;color:rgba(255,255,255,0.4);font-style:italic;font-size:13px;margin-bottom:16px;line-height:1.6;">Yksi pelastettu kauppa kattaa koko pilotin — ja sen jälkeen järjestelmä on voitolla.</p>
+
+        <a href="#calendly" class="btn btn-primary" style="width:100%;justify-content:center;">
+          Hae vauhtia pilotilla
+        </a>
+      </div>
+
+      <p class="pricing-below">
+        Täysi järjestelmä 2 000–5 000 € &nbsp;&nbsp;·&nbsp;&nbsp; Ylläpito 200–400 €/kk
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     8. FINAL CTA / CALENDLY
+═══════════════════════════════════════════════════════════ -->
+<section id="calendly" class="section" aria-labelledby="cal-h2">
+  <div class="wrap">
+    <div class="anim" style="text-align:center;margin-bottom:48px;">
+      <span class="label">Demo</span>
+      <h2 id="cal-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;margin-bottom:12px;">
+        Varaa 20 min demo
+      </h2>
+      <p style="font-size:1rem;color:var(--muted);">Katsotaan yhdessä sopiiko VauhtiSystems teidän prosessiin.</p>
+    </div>
+
+    <div class="anim anim-d1">
+      <iframe
+        src="https://cal.com/sisu-manninen-9a8t5f/demo?embed=true&theme=dark"
+        style="width:100%;min-height:630px;border:none;border-radius:8px;"
+        title="Varaa demo — VauhtiSystems"
+        loading="lazy"
+      ></iframe>
+
+      <p style="text-align:center;margin-top:24px;font-size:0.875rem;color:var(--muted);">
+        tai lähetä sähköpostia:
+        <!-- VAIHDA: demo@vauhtisystems.fi -->
+        <a href="mailto:demo@vauhtisystems.fi" class="email-link">demo@vauhtisystems.fi</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer>
+  <p>VauhtiSystems © 2025</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════ -->
+<script>
+/* ── Nav scroll blur ─────────────────────────────────────── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 24);
+}, { passive: true });
+
+/* ── FAQ accordion ───────────────────────────────────────── */
+document.querySelectorAll('.faq-trigger').forEach(trigger => {
+  trigger.addEventListener('click', () => {
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+    const panel  = document.getElementById(trigger.getAttribute('aria-controls'));
+    // Close all
+    document.querySelectorAll('.faq-trigger').forEach(t => {
+      t.setAttribute('aria-expanded', 'false');
+      const p = document.getElementById(t.getAttribute('aria-controls'));
+      if (p) p.style.maxHeight = '0';
+    });
+    // Open if it was closed
+    if (!isOpen) {
+      trigger.setAttribute('aria-expanded', 'true');
+      if (panel) panel.style.maxHeight = panel.scrollHeight + 'px';
+    }
+  });
+});
+
+/* ── ROI Calculator ──────────────────────────────────────── */
+const sliderLeads = document.getElementById('slider-leads');
+const sliderPrice = document.getElementById('slider-price');
+const leadsVal    = document.getElementById('leads-val');
+const priceVal    = document.getElementById('price-val');
+const roiResult   = document.getElementById('roi-result');
+
+let responseMode = 'hours';
+
+// Conservative conversion rates by response time
+const CONV_RATES = { immediate: 0.35, hours: 0.15, nextday: 0.08 };
+const FAST_RATE  = 0.35; // what VauhtiSystems achieves
+
+function fillSlider(el) {
+  const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+  el.style.background =
+    `linear-gradient(to right, #2563EB 0%, #2563EB ${pct}%, rgba(255,255,255,0.1) ${pct}%, rgba(255,255,255,0.1) 100%)`;
+}
+
+function calcROI() {
+  const leads     = parseInt(sliderLeads.value);
+  const price     = parseInt(sliderPrice.value);
+  const convRate  = CONV_RATES[responseMode];
+
+  const currentDeals  = Math.round(leads * convRate);
+  const fastDeals     = Math.round(leads * FAST_RATE);
+  const lostDeals     = Math.max(0, fastDeals - currentDeals);
+  const lostRevenue   = lostDeals * price;
+
+  const hetiMsg     = document.getElementById('roi-heti-msg');
+  const comparison  = document.getElementById('roi-comparison');
+  const lostRow     = document.getElementById('roi-lost-row');
+  const currentEl   = document.getElementById('roi-current-deals');
+  const fastEl      = document.getElementById('roi-fast-deals');
+  const resultEl    = document.getElementById('roi-result');
+
+  if (responseMode === 'immediate') {
+    hetiMsg.style.display    = 'block';
+    comparison.style.display = 'none';
+    lostRow.style.display    = 'none';
+  } else {
+    hetiMsg.style.display    = 'none';
+    comparison.style.display = 'grid';
+    lostRow.style.display    = 'block';
+    currentEl.textContent    = '~' + currentDeals + ' kauppaa/kk';
+    fastEl.textContent       = '~' + fastDeals + ' kauppaa/kk';
+    resultEl.textContent     = lostRevenue.toLocaleString('fi-FI') + ' €';
+  }
+}
+
+sliderLeads.addEventListener('input', () => {
+  leadsVal.textContent = sliderLeads.value + ' liidiä';
+  fillSlider(sliderLeads);
+  calcROI();
+});
+
+sliderPrice.addEventListener('input', () => {
+  priceVal.textContent = parseInt(sliderPrice.value).toLocaleString('fi-FI') + ' €';
+  fillSlider(sliderPrice);
+  calcROI();
+});
+
+document.querySelectorAll('.roi-seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.roi-seg-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    responseMode = btn.dataset.value;
+    calcROI();
+  });
+});
+
+// Init
+fillSlider(sliderLeads);
+fillSlider(sliderPrice);
+calcROI();
+
+/* ── IntersectionObserver ────────────────────────────────── */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.07, rootMargin: '0px 0px -32px 0px' });
+
+document.querySelectorAll('.anim').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
