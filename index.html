@@ -193,7 +193,8 @@
     .problem-cards {
       display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 64px;
     }
-    @media (min-width: 768px) { .problem-cards { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 768px) { .problem-cards { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .problem-cards { grid-template-columns: repeat(4, 1fr); } }
     .problem-card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--r); padding: 28px 28px 32px;
@@ -441,10 +442,10 @@
   <div class="noise" aria-hidden="true"></div>
 
   <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;">
-    <h1 id="hero-h1" class="anim">Lopeta kauppojen häviäminen hitaille vastauksille.</h1>
+    <h1 id="hero-h1" class="anim">Tiedät aina kehen soittaa ensin — loput hoituvat automaattisesti.</h1>
 
     <p class="sub anim anim-d1">
-      Vastaamme tarjouspyyntöihisi 10 sekunnissa – 24/7. Automatisoimme remonttifirmasi ensivasteen, vaikka olisit itse työmaalla.
+      VauhtiSystems suodattaa turhat kyselyt, vastaa asiakkaillesi 10 sekunnissa ja hälyttää sinut vain silloin kun kyseessä on oikea kauppa.
     </p>
 
     <p class="loss-line anim anim-d2">
@@ -489,6 +490,11 @@
         <h3 class="problem-card-title">Seuranta unohtuu</h3>
         <p class="problem-card-body">Tarjous lähetetty, asiakas ei vastannut. Kukaan ei muista soittaa perään. Kauppa häviää äänettömästi.</p>
       </div>
+      <div class="problem-card anim anim-d4">
+        <div class="problem-card-num">04</div>
+        <h3 class="problem-card-title">Ilta kuluu vääriin liideihin</h3>
+        <p class="problem-card-body">500 € paikkauspyyntö ja 25 000 € urakka näyttävät sähköpostissa samalta. Arvokas myyntiaika kuluu pieniin kyselyihin, kun isot kaupat odottavat.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -508,13 +514,47 @@
     <div class="comparison-grid">
       <div class="compare-col before anim anim-d1">
         <div class="compare-col-label">Ennen</div>
-        <p class="compare-body">Vastaamaton liidi, unohdettu seuranta, kilpailija ehti ensin.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Kyttäät sähköpostia kesken työpäivän
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Vastaat kaikille samalla tavalla ja nopeudella
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Puolet katselmuksista on hukkareissuja
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Myynti stressaa vielä saunan lauteillakin
+          </li>
+        </ul>
         <div class="compare-result">Tulos: 0 €</div>
       </div>
       <div class="compare-col after anim anim-d2">
         <div class="compare-col-label">VauhtiSystems</div>
-        <p class="compare-body">Salamanopea vastaus, valmis kalenterivaraus, tyytyväinen asiakas.</p>
-        <div class="compare-result">Tulos: 15 000 € kauppa</div>
+        <ul style="list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Keskityt työhön, puhelin hälyttää vain tärkeistä
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Parhaat asiakkaat saavat VIP-kohtelun heti
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Käyt vain kohteissa jotka ovat oikeasti potentiaalisia
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Tiedät että automaatio hoitaa homman puolestasi
+          </li>
+        </ul>
+        <div class="compare-result" id="compare-result-after">Tulos: kauppa voitettu</div>
       </div>
     </div>
   </div>
@@ -719,13 +759,108 @@
           <p class="faq-answer">Se on automaatioalusta joka yhdistää järjestelmäsi. Et näe sitä — näet vain tulokset.</p>
         </div>
       </div>
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a6" id="faq-q6">
+          Näenkö ja hyväksynkö viestit ennen kuin ne lähtevät asiakkaille?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a6" role="region" aria-labelledby="faq-q6">
+          <p class="faq-answer">Kyllä. Kaikki viestipohjat rakennetaan yhdessä sinun kanssasi ja sinä hyväksyt ne ennen käyttöönottoa. Viestit kirjoitetaan yrityksesi äänellä — asiakas ei erota niitä manuaalisesta vastauksesta.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a7" id="faq-q7">
+          Kuulostaako automaattivastaus robottimaiselta?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a7" role="region" aria-labelledby="faq-q7">
+          <p class="faq-answer">Ei. Viesti viittaa aina asiakkaan kertomiin tietoihin — kohteeseen, sijaintiin ja projektin tyyppiin. Se tuntuu henkilökohtaiselta vastaukselta, ei massaviestiltä.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-trigger" aria-expanded="false" aria-controls="faq-a8" id="faq-q8">
+          Miten todistatte että tämä toimii?
+          <span class="faq-icon-wrap" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div class="faq-panel" id="faq-a8" role="region" aria-labelledby="faq-q8">
+          <p class="faq-answer">Saat 30 päivän jälkeen selkeän raportin: vasteajat ennen ja jälkeen, kuumien liidien määrä, ja toteutuneet kaupat. Raportti tulee automaattisesti — sinun ei tarvitse täyttää mitään.</p>
+        </div>
+      </div>
 
     </div>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════
-     7. PRICING
+     7. EI CHATBOT — EROTTAUTUMINEN
+═══════════════════════════════════════════════════════════ -->
+<section id="erottautuminen" class="section" aria-labelledby="erottautuminen-h2" style="border-top:1px solid var(--border);">
+  <div class="wrap">
+    <div class="anim" style="margin-bottom:48px;">
+      <span class="label">Erottautuminen</span>
+      <h2 id="erottautuminen-h2" style="font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;line-height:1.15;max-width:560px;margin-bottom:20px;">
+        Ei mikään passiivinen chatbot.
+      </h2>
+      <p style="font-size:1rem;color:var(--muted);line-height:1.75;max-width:600px;">
+        Tavalliset chatbotit odottavat kysymyksiä verkkosivullasi. VauhtiSystems toimii toisin: se ottaa kopin jokaisesta liidistä, selvittää automaattisesti budjetin ja aikataulun, ja työntää parhaat kaupat suoraan puhelimeesi soittovalmiiksi.
+      </p>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="compare-col before anim anim-d1">
+        <div class="compare-col-label">Tavallinen chatbot</div>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Odottaa että asiakas kirjoittaa
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Ei pisteytä liidejä
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Et tiedä mikä on tärkeää
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:rgba(239,68,68,0.6);">✕</span>
+            Kaikki liidit näyttävät samalta
+          </li>
+        </ul>
+      </div>
+      <div class="compare-col after anim anim-d2">
+        <div class="compare-col-label">VauhtiSystems</div>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Reagoi jokaiseen liidiin sekunteissa
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Pisteyttää automaattisesti: kuuma / keski / kylmä
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Saat ilmoituksen vain tärkeistä
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9375rem;color:rgba(255,255,255,0.85);line-height:1.6;">
+            <span style="margin-top:3px;flex-shrink:0;color:var(--green);">✓</span>
+            Tiedät aina kehen soittaa ensin
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     8. PRICING
 ═══════════════════════════════════════════════════════════ -->
 <section id="pricing" class="section" aria-labelledby="pricing-h2">
   <div class="wrap">
@@ -759,7 +894,7 @@
           </li>
           <li>
             <svg class="check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Hallintanäkymä
+            Aamuinen prioriteettilista — tiedät kehen soittaa ensin
           </li>
           <li>
             <svg class="check-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -926,6 +1061,8 @@ sliderPrice.addEventListener('input', () => {
   priceVal.textContent = parseInt(sliderPrice.value).toLocaleString('fi-FI') + ' €';
   fillSlider(sliderPrice);
   calcROI();
+  const cr = document.getElementById('compare-result-after');
+  if (cr) cr.textContent = 'Tulos: ' + parseInt(sliderPrice.value).toLocaleString('fi-FI') + ' € kauppa';
 });
 
 document.querySelectorAll('.roi-seg-btn').forEach(btn => {
